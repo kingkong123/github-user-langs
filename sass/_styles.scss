@@ -1,0 +1,85 @@
+html{ height: 100%; }
+html, body{
+	min-height: 100%;
+}
+
+.header{
+	text-align: center;
+}
+
+.footer{
+	padding: 18px 0;
+	max-width: 100%;
+	border-top: 1px solid #ccc;
+	text-align: center;
+	color: #666;
+	font-size: 95%;
+	font-weight: 300;
+	font-family: 'Roboto', sans-serif;
+}
+
+.search-bar{
+	padding-top: 14px;
+}
+
+.row{
+	&.user-info{
+		margin-bottom: 8px;
+
+		h2{
+			margin: 0;
+		}
+		img{
+			padding: 3px;
+			border: 1px solid #eee;
+			background: #fff;
+		}
+	}
+	&.results{
+		min-height: 280px;
+		padding-bottom: 18px;
+	}
+}
+
+.content{
+	min-height: 180px;
+}
+.chart, .repos, .repo-column{
+	transition: all 0.35s;
+	opacity: 0;
+	&.show{
+		opacity: 1;
+	}
+}
+
+.repo-column{
+	background: #fefefe;
+}
+
+.repos{
+	padding-bottom: 8px;
+
+	ul.repo-list{
+		list-style: none;
+		li{
+			border-bottom: 1px solid #eee;
+			&:last-child{
+				border-bottom: 0;
+			}
+		}
+	}
+}
+
+#spinner-div{
+	left: 50%;
+	height: 54px;
+	width: 54px;
+	margin-left: -27px;
+	position: absolute;
+	display: none;
+}
+
+.hidden{
+	display: none;
+	opacity: 0;
+}

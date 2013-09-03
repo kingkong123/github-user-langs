@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>GitHub User's Language Break Down</title>
+
+	<link rel="stylesheet" href="css/app.css">
+	<link rel="stylesheet" href="css/general_foundicons.css">
+
+	<script src="js/vendor/custom.modernizr.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+	<script src="js/jquery.jqplot.min.js"></script>
+	<script src="js/jqplot.pieRenderer.min.js"></script>
+	
+	<script src="js/GithubUserLangs.js"></script>
+<script>
+	var spinner = null;
+	var spinner_opts = {
+		lines: 13, // The number of lines to draw
+		length: 18, // The length of each line
+		width: 8, // The line thickness
+		radius: 18, // The radius of the inner circle
+		corners: 1, // Corner roundness (0..1)
+		color: '#333', // #rgb or #rrggbb or array of colors
+	};
+
+(function($) {
+    $(function() {
+        $(document).foundation();
+        $('input').placeholder();
+
+        set_spinner_top();
+        
+        var name = getUserName();
+        var repo_size = 0;
+
+        $('#username').keypress(function(e){
+        	if(e.which == 13) {
+		        $('#submit-username').click();
+		    }
+        });
+
+        $('#submit-username').click(function(e){
+        	e.preventDefault();
+        	var url = '';
+        	var username = '';
+
+        	if(location.href.indexOf('?') > -1){
+        		url = location.href.substring(0, location.href.indexOf('?'));
+        	}else{
+        		url = location.href;
+        	}
+
+        	if($('#username').val().length > 0){
+        		username = $('#username').val();
+        	}
+
+        	if(url.length > 0 && username.length > 0){
+        		window.location = url+'?'+username;
+        	}
+        });
+
+        if(name){
+        	if(spinner == null){
+        		$('#spinner-div').show();
+        		var target = document.getElementById('spinner-div');
+        		spinner = new Spinner(spinner_opts).spin(target);
+        	}
+        	$('<link />', {
+        		rel: 'stylesheet',
+        		type: 'text/css',
+        		href: 'css/github_colors.css'
+        	}).appendTo('head');
+
+        	var githubapi = new $.GithubUserApi({
+	            user: name,
+	            includedForks: false,
+	            repoSort: 'forks',
+	            repoDirection: 'desc',
+	            langSort: 'size', // name, size
+	            langDirection: 'desc', // asc, desc
+	        });
+
+	        githubapi.getUserInfo(function(result){
+	        	if(result.success){
+	        		var html = '<div class="large-offset-1 small-offset-1 large-2 small-3 columns"><img src="'+result.data.avatar_url+'" /></div><div class="large-9 small-8 columns"><h2><a href="'+result.data.html_url+'">'+result.data.login+'</a></h2></div>';
+
+		        	$('.user-info').html(html);
+	        	}else if(!result.success && result.message){
+	        		$('.user-info').html('<div class="large-12 columns"><div class="alert-box alert"><i class="foundicon-remove"></i> '+result.message+'</div></div>');
+	        	}
+
+	        	$('.results').removeClass('hidden');
+	        	$('.chart').removeClass('hidden').addClass('show');
+
+	        	if($('#spinner-div').is(':visible')){
+	        		$('#spinner-div').hide();
+	        	}
+	        	if(spinner != null){
+	        		spinner.stop();
+	        	}
+	        });
+
+	        githubapi.getAllRepos(function(result){
+	            var repos = '';
+
+	            if(result.success){
+	                if(result.data.length > 0){
+	                	repo_size = result.data.length;
+	                    var items = [];
+	            
+	                    $.each(result.data, function(key, val) {
+	                        items.push('<li><h4><a href="'+val.html_url+'">'+val.name+'</a></h4><p>'+val.description+'</p>'+(val.language != null? '<span class="'+val.language.toLowerCase()+'" title="'+val.language+'"></span>': '')+'</li>');
+	                    });
+
+	                    $('.repo-count').html('('+repo_size+')');
+	                    repos = $('<ul/>', {
+	                        'class': 'repo-list',
+	                        html: items.join('')
+	                    });
+	                }
+	            }else if(!result.success && result.message){
+	                repos = '<div class="alert-box alert"><i class="foundicon-remove"></i> '+result.message+'</div>';
+	            }else if(!result.success && !result.message){
+	                repos = '<div class="alert-box alert"><i class="foundicon-remove"></i> Error occurs, please try to reload the page.</div>';
+	            }
+
+	            $('.results').removeClass('hidden');
+	            $('.repo-column').removeClass('hidden').addClass('show');
+	            $('.repos').html(repos).addClass('show');
+
+	            if($('#spinner-div').is(':visible')){
+	        		$('#spinner-div').hide();
+	        	}
+	            if(spinner != null){
+	        		spinner.stop();
+	        	}
+
+	            githubapi.getAllLangs(function(langResult){
+	                var langs = '';
+	                var langSum = 0;
+	                var langBar = '';
+	                var lang_array = [];
+	                var color_array = [];
+
+	                if(langResult.success){
+	                    if(langResult.data.length > 0){
+	                    	$('<link />', {
+				        		rel: 'stylesheet',
+				        		type: 'text/css',
+				        		href: 'css/jquery.jqplot.min.css'
+				        	}).appendTo('head');
+
+	                        langs += '<ul class="lang-list">';
+
+	                        $.each(langResult.data, function(idx, val){
+	                        	var class_name = getLanguageClass(val.name);
+
+	                        	lang_array.push( [val.name, val.size] );
+	                        	if(lang_colors[class_name]){
+	                        		color_array.push(lang_colors[class_name]);
+	                        	}else{
+	                        		color_array.push(lang_colors['default']);
+	                        	}
+
+	                            langSum += val.size;
+
+	                            langs += '<li class="'+class_name+'">'+val.name+'<span class="byte">'+val.size+'</span></li>';
+	                        });
+
+	                        $('.results').removeClass('hidden');
+
+	                        $.jqplot.config.enablePlugins = true;
+	                        $.jqplot('chart1',
+								[lang_array],
+								{
+									title: ' ',
+									seriesColors: color_array,
+									seriesDefaults: {
+										shadow: true,
+										renderer: $.jqplot.PieRenderer,
+										rendererOptions: { padding: 9, sliceMargin: 3, showDataLabels: true }
+									},
+									legend: { show:true, location: 'e' }
+								}
+							);
+
+							$('.chart').removeClass('hidden').addClass('show');
+
+	                        langs += '</ul>';
+	                    }
+	                }else if(!langResult.success && langResult.message){
+	                    langs = '<div class="alert-box alert"><i class="foundicon-remove"></i> '+langResult.message+'</div>';
+	                }else if(!langResult.success && !langResult.message){
+	                    langs = '<div class="alert-box alert"><i class="foundicon-remove"></i> Error occurs, please try to reload the page.</div>';
+	                }
+
+	                $('.langs').append(langs);
+
+	                if(langSum > 0){
+	                    $.each(langResult.data, function(idx, val){
+	                        langBar += '<span class="'+getLanguageClass(val.name)+'" style="width: '+((val.size / langSum) *100).toFixed(3)+'%;"></span>';
+	                    });
+
+	                    $('.language-bar').prepend(langBar);
+	                }
+	            });
+	        });
+        }else{
+        	$('.intro').removeClass('hidden');
+
+        	if($('#spinner-div').is(':visible')){
+        		$('#spinner-div').hide();
+        	}
+        	if(spinner != null){
+        		spinner.stop();
+        	}
+        }
+    });
+
+	function set_spinner_top(){
+		var top = $('.line-break').offset().top + $('.line-break').height() + 8;
+		$('#spinner-div').css('top', top);
+	}
+})(jQuery);
+</script>
+</head>
+<body>
+	<div class="row header">
+		<div class="large-12 columns">
+			<h1>GitHub User's Language Break Down</h1>
+			<hr />
+		</div>
+	</div>
+
+	<div class="row search-bar">
+		<div class="large-9 small-10 small-centered large-centered columns">
+			<div class="row collapse">
+				<div class="large-11 small-10 columns">
+					<input type="text" placeholder="GitHub username" id="username" />
+				</div>
+				<div class="large-1 small-2 columns">
+					<a href="#" id="submit-username" class="button secondary prefix"><i class="foundicon-search"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row"><div class="large-12 columns line-break"><hr /></div></div>
+
+	<div class="row content">
+		<div class="large-12 columns">
+			<div class="row intro hidden">
+				<div class="large-10 small-11 small-centered large-centered columns">
+					<p>
+						From the GitHub user's page, you can't easily to tell what's the best language of the user. This mini tool parse the GitHub API for the user's repos and list out those languages bytes of code (seems like it works great with organization accounts too).
+					</p>
+					<p>
+						This page uses the <a href="">GitHub User Langs</a>, a small jQuery Plugin parse GitHub API.
+					</p>
+				</div>
+			</div>
+
+			<div class="row results hidden">
+				<div class="large-6 columns chart">
+					<div class="row user-info"></div>
+					<div id="chart1"></div>
+				</div>
+				<div class="large-6 columns repo-column hidden">
+					<h3>Repos <span class="repo-count"></span></h3>
+					<div class="repos"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row footer">
+		<div class="large-12 columns">
+			brought to you by <a href="http://kingkong123.github.io">kingkong123</a>
+		</div>
+	</div>
+	<div id="spinner-div"></div>
+  	
+  	<script src="js/spin.min.js"></script>
+	<script src="js/foundation/foundation.js"></script>
+	
+	<script src="js/foundation/foundation.alerts.js"></script>
+	
+	<script src="js/foundation/foundation.forms.js"></script>
+	
+	<script src="js/foundation/foundation.placeholder.js"></script>
+	
+	<script src="js/foundation/foundation.section.js"></script>
+	
+	<script src="js/functions.js"></script>
+	<script src="js/lang_colors.js"></script>
+</body>
+</html>

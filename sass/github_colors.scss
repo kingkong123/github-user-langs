@@ -1,0 +1,109 @@
+$default-color: #CCCCCC;
+
+$ada-color: #02F88C;
+$arc-color: #CA2AFE;
+$arduino-color: #BD79D1;
+$asp-color: #6A40FD;
+$assembly-color: #A67219;
+$autohotkey-color: #6594B9;
+
+$boo-color: #D4BEC1;
+
+$c-color: #555555;
+$c-sharp-color: #5A25A2;
+$clojure-color: #DB5855;
+$coffeescript-color: #244776;
+$coldfusion-color: #ED2CD6;
+$common-lisp-color: #3FB68B;
+$cpp-color: #F34B7D;
+$css-color: #1F085E;
+
+$d-color: #FCD46D;
+$delphi-color: #B0CE4E;
+$dylan-color: #3EBC27;
+
+$ecl-color: #8A1267;
+$eiffel-color: #946D57;
+$elixir-color: #6E4A7E;
+$emacs-lisp-color: #C065DB;
+$erlang-color: #0FAF8D;
+
+$factor-color: #636746;
+$fancy-color: #7B9DB4;
+$fantom-color: #DBDED5;
+$fortran-color: #4D41B1;
+
+$go-color: #A89B4D;
+$gosu-color: #82937F;
+$groovy-color: #E69F56;
+
+$haskell-color: #29B544;
+$haxe-color: #346D51;
+
+$io-color: #A9188D;
+$ioke-color: #078193;
+
+$java-color: #B07219;
+$javascript-color: #F15501;
+
+$lua-color: #FA1FA1;
+
+$matlab-color: #BB92AC;
+$max-color: #CE279C;
+$mirah-color: #C7A938;
+
+$nemerle-color: #0D3C6E;
+$nimrod-color: #37775B;
+$nu-color: #C9DF40;
+
+$objective-c-color: #438EFF;
+$objective-j-color: #FF0C5A;
+$ocaml-color: #3BE133;
+$ooc-color: #B0B77E;
+
+$parrot-color: #F3CA0A;
+$perl-color: #0298C3;
+$php-color: #6E03C1;
+$processing-color: #2779AB;
+$prolog-color: #74283C;
+$puppet-color: #CC5555;
+$pure-data-color: #91DE79;
+
+$r-color: #198CE7;
+$racket-color: #AE17FF;
+$rebol-color: #198CE7;
+$ruby-color: #701516;
+$rust-color: #DEA584;
+
+$scala-color: #7DD3B0;
+$scheme-color: #1E4AEC;
+$self-color: #0579AA;
+$shell-color: #5861CE;
+$smalltalk-color: #596706;
+$standard-ml-color: #DC566D;
+$supercollider-color: #46390B;
+
+$tcl-color: #E4CC98;
+$turing-color: #45F715;
+
+$vala-color: #EE7D06;
+$verilog-color: #848BF3;
+$vhdl-color: #543978;
+$viml-color: #199C4B;
+$visual-basic-color: #945DB7;
+
+$xquery-color: #2700E2;
+
+$color_names: default, ada, arc, arduino, asp, assembly, autohotkey, boo, c, c-sharp, clojure, coffeescript, coldfusion, common-lisp, cpp, css, d, delphi, dylan, ecl, eiffel, elixir, emacs-lisp, erlang, factor, fancy, fantom, fortran, go, gosu, groovy, haskell, haxe, io, ioke, java, javascript, lua, matlab, max, mirah, nemerle, nimrod, nu, objective-c, objective-j, ocaml, ooc, parrot, perl, php, processing, prolog, puppet, pure-data, r, racket, rebol, ruby, rust, scala, scheme, self, shell, smalltalk, standard-ml, supercollider, tcl, turing, vala, verilog, vhdl, viml, visual-basic, xquery;
+$github_colors: $default-color, $ada-color, $arc-color, $arduino-color, $asp-color, $assembly-color, $autohotkey-color, $boo-color, $c-color, $c-sharp-color, $clojure-color, $coffeescript-color, $coldfusion-color, $common-lisp-color, $cpp-color, $css-color, $d-color, $delphi-color, $dylan-color, $ecl-color, $eiffel-color, $elixir-color, $emacs-lisp-color, $erlang-color, $factor-color, $fancy-color, $fantom-color, $fortran-color, $go-color, $gosu-color, $groovy-color, $haskell-color, $haxe-color, $io-color, $ioke-color, $java-color, $javascript-color, $lua-color, $matlab-color, $max-color, $mirah-color, $nemerle-color, $nimrod-color, $nu-color, $objective-c-color, $objective-j-color, $ocaml-color, $ooc-color, $parrot-color, $perl-color, $php-color, $processing-color, $prolog-color, $puppet-color, $pure-data-color, $r-color, $racket-color, $rebol-color, $ruby-color, $rust-color,  $scala-color, $scheme-color, $self-color, $shell-color, $smalltalk-color, $standard-ml-color, $supercollider-color, $tcl-color, $turing-color, $vala-color, $verilog-color, $vhdl-color, $viml-color, $visual-basic-color, $xquery-color;
+
+@for $i from 1 through length($color_names) {
+
+    .#{nth($color_names, $i)}-bgcolor {
+        background-color: #{nth($github_colors, $i)};
+    }
+
+    .#{nth($color_names, $i)}-fontcolor {
+        color: #{nth($github_colors, $i)};
+    }
+}
