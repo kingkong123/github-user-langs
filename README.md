@@ -3,6 +3,8 @@ GitHub User Langs jQuery Plugin
 
 Requirements: jQuery (tested on 1.10.1 and 1.10.2)
 
+Demo: http://kingkong123.github.io/github-user-langs/
+
 ##Init the Plugin
 ```javascript
 var githublangs = new $.GithubUserApi({
